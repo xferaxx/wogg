@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "scores-app.fullname" . }}-db-pvc
+  labels:
+    {{- include "scores-app.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.persistence.size }}  # This should match the size defined in values.yaml
+  storageClassName: {{ .Values.persistence.storageClass | quote }}  # Define the storage class if needed

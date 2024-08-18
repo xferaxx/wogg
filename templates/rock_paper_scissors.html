@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rock, Paper, Scissors</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .choices-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px;
+        }
+        .choice-button {
+            background-color: #d9534f;
+            color: #ffffff;
+            padding: 15px 30px;
+            font-size: 1.5em;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        .choice-button:hover {
+            background-color: #ff6666;
+            transform: scale(1.1);
+        }
+        .level-selection {
+            text-align: center;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Rock, Paper, Scissors</h1>
+
+    <!-- Display the user's current score -->
+    <div class="score-container">
+        <p>{{ username }}, your score is: <strong>{{ score }}</strong></p>
+    </div>
+
+    {% if result_message %}
+        <p>{{ result_message }}</p>
+        <form method="GET" action="{{ url_for('rock_paper_scissors') }}">
+            <button type="submit">Play Again</button>
+        </form>
+        <form method="GET" action="{{ url_for('home') }}">
+            <button type="submit">Go Back</button>
+        </form>
+    {% elif not show_choices %}
+        <!-- Form to select level -->
+        <div class="level-selection">
+            <form method="POST" action="{{ url_for('rock_paper_scissors') }}">
+                <label for="level">Select Level:</label>
+                <input type="number" id="level" name="level" min="1" max="5" required>
+                <button type="submit">Start Game</button>
+            </form>
+        </div>
+    {% else %}
+        <!-- Display the choices side by side -->
+        <p>Please hit one of the buttons below:</p>
+        <div class="choices-container">
+            <form method="POST" action="{{ url_for('rock_paper_scissors') }}">
+                <input type="hidden" name="choice" value="rock">
+                <button type="submit" class="choice-button">Rock</button>
+            </form>
+            <form method="POST" action="{{ url_for('rock_paper_scissors') }}">
+                <input type="hidden" name="choice" value="paper">
+                <button type="submit" class="choice-button">Paper</button>
+            </form>
+            <form method="POST" action="{{ url_for('rock_paper_scissors') }}">
+                <input type="hidden" name="choice" value="scissors">
+                <button type="submit" class="choice-button">Scissors</button>
+            </form>
+        </div>
+    {% endif %}
+
+    <div class="logout-container">
+        <a href="{{ url_for('logout') }}" class="logout-button">Logout</a>
+    </div>
+</body>
+</html>

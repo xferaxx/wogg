@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scores-app-db
+  labels:
+    app.kubernetes.io/instance: scores-app
+    app.kubernetes.io/name: scores-app-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: scores-app
+      app.kubernetes.io/name: scores-app-db
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: scores-app
+        app.kubernetes.io/name: scores-app-db
+    spec:
+      containers:
+        - name: scores-app-db
+          image: xferax/wogg-db:latest
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ALLOW_EMPTY_PASSWORD
+              value: "yes"
+            - name: MYSQL_DATABASE
+              value: "games"
+            - name: MYSQL_ROOT_PASSWORD
+              value: ""  # Set to "" for an empty password; adjust if needed
+          volumeMounts:
+            - name: init-sql-volume
+              mountPath: /docker-entrypoint-initdb.d
+      volumes:
+        - name: init-sql-volume
+          configMap:
+            name: init-sql

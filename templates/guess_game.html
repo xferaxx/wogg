@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Guess Game</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Guess Game</h1>
+
+    <!-- Display the user's current score -->
+    <div class="score-container">
+        <p>{{ username }}, your score is: <strong>{{ score }}</strong></p>
+    </div>
+
+
+    {% if result_message %}
+        <p>{{ result_message }}</p>
+        <form method="GET" action="{{ url_for('guess_game') }}">
+            <button type="submit">Play Again</button>
+        </form>
+        <form method="GET" action="{{ url_for('home') }}">
+            <button type="submit">Go Back</button>
+        </form>
+    {% elif not show_guess %}
+        <!-- Form to select level and generate the number -->
+        <form method="POST">
+            <label for="level">Select Level (max number to guess):</label>
+            <input type="number" id="level" name="level" min="1" max="5" required>
+            <button type="submit">Start Game</button>
+        </form>
+    {% elif show_guess %}
+        <!-- Form to enter the guess -->
+        <p>Try to guess the number between 0 and {{ level }}</p>
+        <form method="POST">
+            <input type="hidden" name="generated_number" value="{{ generated_number }}">
+            <label for="user_guess">Enter your guess:</label>
+            <input type="number" id="user_guess" name="user_guess" min="0" max="{{ level }}" required>
+            <button type="submit">Submit</button>
+        </form>
+
+        <div class="logout-container">
+            <a href="{{ url_for('logout') }}" class="logout-button">Logout</a>
+        </div>
+    {% endif %}
+</body>
+</html>

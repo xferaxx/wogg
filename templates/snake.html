@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script defer src="{{ url_for('static', filename='snake.js') }}"></script>
+</head>
+<body>
+    <header>
+        <h1>Snake Game</h1>
+    </header>
+
+    {% if not show_board %}
+    <div id="level-selection">
+        <form method="POST" action="{{ url_for('snake') }}">
+            <p>Select Difficulty Level:</p>
+            <button name="level" value="1">Easy</button>
+            <button name="level" value="2">Medium</button>
+            <button name="level" value="3">Hard</button>
+        </form>
+    </div>
+    {% else %}
+    <div class="snake-game-container" id="snake-game-container">
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
+        <p id="score">Score: 0</p>
+        <form method="POST" action="{{ url_for('snake') }}">
+            <input type="hidden" id="result-input" name="result" value="">
+        </form>
+        <button onclick="resetGame()">Restart Game</button>
+    </div>
+    {% endif %}
+
+    <aside class="score-container">
+        <p>{{ username }}, your score is: <strong>{{ score }}</strong></p>
+    </aside>
+
+    <footer>
+        <div class="logout-container">
+            <a href="{{ url_for('logout') }}" class="logout-button">Logout</a>
+        </div>
+    </footer>
+</body>
+</html>

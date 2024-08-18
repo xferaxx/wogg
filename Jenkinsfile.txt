@@ -1,0 +1,93 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/xferaxx/WorldOfGames.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    bat 'docker build -t xferax/wogg-app-jenkins:latest .' 
+                    bat 'docker build -f Dockerfile.db -t xferax/wogg-db-jenkins:latest .'
+                }
+            }
+        }
+        
+        stage('Run Docker Container') {
+            steps {
+                script {
+                    bat 'docker rm -f wogg-app-jenkins || echo "No existing app container to remove."'
+                    bat 'docker rm -f wogg-db-jenkins || echo "No existing db container to remove."'
+                    bat 'docker network rm wogg-network-test || echo "No existing network to remove."'
+                    
+                    bat 'docker network create wogg-network-test || exit 1'
+                    bat 'docker network ls' 
+        
+                    bat 'docker run -d --network wogg-network-test --name wogg-db-jenkins -p 3307:3306 xferax/wogg-db-jenkins:latest || exit 1'
+                    bat 'docker ps -a' 
+        
+                    // Wait for 10 seconds after starting the database container using PowerShell
+                    bat 'powershell -Command "Start-Sleep -Seconds 10"'
+        
+                    bat 'docker run -d --network wogg-network-test --name wogg-app-jenkins -p 5000:5000 -e MYSQL_HOST=wogg-db-jenkins xferax/wogg-app-jenkins:latest || exit 1'
+                    bat 'docker ps -a' 
+                    bat 'powershell -Command "Start-Sleep -Seconds 30"'
+                }
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    bat 'pip install selenium'
+                }
+            }
+        }
+
+        stage('Wait for Service to Start') {
+            steps {
+                script {
+                    bat 'ping -n 10 127.0.0.1 >nul' 
+                }
+            }
+        }
+
+        stage('Debug Docker Container') {
+            steps {
+                script {
+                    bat 'docker ps -a' 
+                    bat 'curl http://127.0.0.1:5000' 
+                }
+            }
+        }
+
+        stage('Test Application') {
+            steps {
+                script {
+                    bat 'python C:/Users/PC/PycharmProjects/wogg/e2e.py' 
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            script {
+                withCredentials([usernamePassword(credentialsId: '17b7ef5d-56a6-4913-890b-0453d0d676d4', passwordVariable: 'DOCKER_HUB_PASSWORD', usernameVariable: 'DOCKER_HUB_USERNAME')]) {
+                    bat 'docker login -u %DOCKER_HUB_USERNAME% -p %DOCKER_HUB_PASSWORD%'
+                    bat 'docker push xferax/wogg-app-jenkins:latest'
+                    bat 'docker push xferax/wogg-db-jenkins:latest'
+                }
+            }
+        }
+        always {
+            script {
+                echo 'Pipeline stage completed.'
+            }
+        }
+    }
+}

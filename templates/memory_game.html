@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Memory Game</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        #sequence {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        #user-input-form {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Memory Game</h1>
+
+    <!-- Display the user's current score -->
+    <div class="score-container">
+        <p>{{ username }}, your score is: <strong>{{ score }}</strong></p>
+    </div>
+
+
+    {% if result_message %}
+        <p>{{ result_message }}</p>
+        <form method="GET" action="{{ url_for('memory_game') }}">
+            <button type="submit">Play Again</button>
+        </form>
+        <form method="GET" action="{{ url_for('home') }}">
+            <button type="submit">Go Back</button>
+        </form>
+    {% elif not show_sequence %}
+        <!-- Form to select level and generate the sequence -->
+        <form method="POST">
+            <label for="level">Select Level:</label>
+            <input type="number" id="level" name="level" min="1" max="5" required>
+            <button type="submit">Start Game</button>
+        </form>
+    {% elif show_sequence %}
+        <!-- Show the generated sequence to the user -->
+        <p id="sequence">Remember this sequence: {{ pc_list }}</p>
+
+        <!-- Form to enter the sequence -->
+        <form id="user-input-form" method="POST">
+            <input type="hidden" name="pc_list" value="{{ pc_list }}">
+            <label for="user_list">Enter the sequence (comma-separated):</label>
+            <input type="text" id="user_list" name="user_list" required>
+            <button type="submit">Submit</button>
+        </form>
+        <script>
+            // Hide the sequence after 3 seconds
+            setTimeout(function() {
+                document.getElementById('sequence').style.display = 'none';
+                document.getElementById('user-input-form').style.display = 'block';
+            }, 3000); // 3000 milliseconds = 3 seconds
+        </script>
+
+        <div class="logout-container">
+            <a href="{{ url_for('logout') }}" class="logout-button">Logout</a>
+        </div>
+
+    {% endif %}
+</body>
+</html>

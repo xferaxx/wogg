@@ -1,0 +1,63 @@
+HOW TO DOWNLOAD AND RUN THE IMAGE
+
+
+
+
+**** RUN THE RUN.CMD FILE TO DOWNLOAD AND RUN AUTOMATICALLY (it run on port 5000)
+
+
+
+
+
+
+OR MANUALLY
+1) use the command: docker pull xferax/flask-app:1.2
+
+2) use the command: docker run -d -p 5000:5000 xferax/flask-app:1.2
+                                  or 8777:5000
+
+
+3) run 127.0.0.1:5000 or 127.0.0.1:8777 depend what you chose up in number 2
+
+
+
+
+
+
+
+
+
+
+
+###############################################
+
+Bonus mission
+
+
+how to Run the website
+
+
+#Pull the database image from Dockerhub
+1) docker pull xferax/wogg-db:latest
+
+#Pull the app image from Dockerhub
+2) docker pull xferax/wogg-app:latest
+
+
+**now we need to create a network to let the flask server communicate with the SQL
+
+
+#Create a network
+3) docker network create wogg-network
+
+# Run the database on the network that we created using port 3307:3306
+4) docker run -d --network wogg-network --name wogg-db -p 3307:3306 xferax/wogg-db:latest
+
+#Run the app on the network that we created using the port 5000:5000
+5) docker run -d --network wogg-network --name wogg-app -p 5000:5000 -e MYSQL_HOST=wogg-db xferax/wogg-app:latest
+ 
+
+
+open browser and type http://127.0.0.1:5000
+
+

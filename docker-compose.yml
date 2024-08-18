@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    image: xferax/wogg-app:latest  # Tag the app image with your Docker Hub repository
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_USER=root
+      - MYSQL_DB=games
+    volumes:
+      - ./Scores.txt:/app/Scores.txt
+      - .:/app  # Mount the entire project directory to /app in the container
+
+  db:
+    image: xferax/wogg-db:latest  # Use your custom MySQL image
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+      MYSQL_DATABASE: games
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+
+volumes:
+  db_data:

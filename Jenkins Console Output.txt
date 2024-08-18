@@ -1,0 +1,348 @@
+Started by user julian kh
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on node01 in c:\temp\workspace\pl-flask
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Checkout)
+[Pipeline] git
+The recommended git tool is: NONE
+No credentials specified
+Fetching changes from the remote Git repository
+ > git.exe rev-parse --resolve-git-dir c:\temp\workspace\pl-flask\.git # timeout=10
+ > git.exe config remote.origin.url https://github.com/xferaxx/julian-0105-wog-final.git # timeout=10
+Fetching upstream changes from https://github.com/xferaxx/julian-0105-wog-final.git
+ > git.exe --version # timeout=10
+ > git --version # 'git version 2.45.2.windows.1'
+ > git.exe fetch --tags --force --progress -- https://github.com/xferaxx/julian-0105-wog-final.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+Checking out Revision 5e673a8dc7fd14b4bb2bfed5d34ea6d665880d9e (refs/remotes/origin/main)
+Commit message: "Add files via upload"
+ > git.exe rev-parse "refs/remotes/origin/main^{commit}" # timeout=10
+ > git.exe config core.sparsecheckout # timeout=10
+ > git.exe checkout -f 5e673a8dc7fd14b4bb2bfed5d34ea6d665880d9e # timeout=10
+ > git.exe branch -a -v --no-abbrev # timeout=10
+ > git.exe branch -D main # timeout=10
+ > git.exe checkout -b main 5e673a8dc7fd14b4bb2bfed5d34ea6d665880d9e # timeout=10
+ > git.exe rev-list --no-walk 5e673a8dc7fd14b4bb2bfed5d34ea6d665880d9e # timeout=10
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build Docker Image)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] bat
+
+c:\temp\workspace\pl-flask>cd C:\Users\PC\PycharmProjects\wog 
+[Pipeline] bat
+
+c:\temp\workspace\pl-flask>docker-compose build 
+time="2024-07-29T04:58:11+03:00" level=warning msg="c:\\temp\\workspace\\pl-flask\\docker-compose.yml: `version` is obsolete"
+2024/07/29 04:58:11 http2: server: error reading preface from client //./pipe/docker_engine: file has already been closed
+#0 building with "default" instance using docker driver
+
+#1 [web internal] load build definition from Dockerfile
+#1 transferring dockerfile: 684B done
+#1 DONE 0.0s
+
+#2 [web internal] load metadata for docker.io/library/python:3.11-slim
+#2 ...
+
+#3 [web auth] library/python:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#2 [web internal] load metadata for docker.io/library/python:3.11-slim
+#2 DONE 1.8s
+
+#4 [web internal] load .dockerignore
+#4 transferring context: 2B done
+#4 DONE 0.0s
+
+#5 [web 1/5] FROM docker.io/library/python:3.11-slim@sha256:3f3c35617e79276c5f6a2e6a13cdbabdd10257332df963c90c986858b26fad5e
+#5 DONE 0.0s
+
+#6 [web internal] load build context
+#6 transferring context: 43.61kB 0.1s done
+#6 DONE 0.1s
+
+#7 [web 2/5] WORKDIR /test
+#7 CACHED
+
+#8 [web 3/5] COPY requirements.txt ./
+#8 CACHED
+
+#9 [web 4/5] RUN pip install --no-cache-dir -r requirements.txt
+#9 CACHED
+
+#10 [web 5/5] COPY . .
+#10 DONE 0.3s
+
+#11 [web] exporting to image
+#11 exporting layers
+#11 exporting layers 0.3s done
+#11 writing image sha256:80e79170701b9982280914cbc4c96edd476e7e4549b3ce62d72965be5c8b938a done
+#11 naming to docker.io/xferax/flask-app:1.2 0.0s done
+#11 DONE 0.4s
+[Pipeline] bat
+
+c:\temp\workspace\pl-flask>docker build -t jenkinsimg:0.2 . 
+2024/07/29 04:58:15 http2: server: error reading preface from client //./pipe/docker_engine: file has already been closed
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 684B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.11-slim
+#2 DONE 0.4s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [1/5] FROM docker.io/library/python:3.11-slim@sha256:3f3c35617e79276c5f6a2e6a13cdbabdd10257332df963c90c986858b26fad5e
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 15.48kB 0.1s done
+#5 DONE 0.1s
+
+#6 [3/5] COPY requirements.txt ./
+#6 CACHED
+
+#7 [4/5] RUN pip install --no-cache-dir -r requirements.txt
+#7 CACHED
+
+#8 [2/5] WORKDIR /test
+#8 CACHED
+
+#9 [5/5] COPY . .
+#9 CACHED
+
+#10 exporting to image
+#10 exporting layers done
+#10 writing image sha256:5ad626e45434f8e28596a4a1982b3a5f350dfe62f7cda3a939d28d3ab1f7611d done
+#10 naming to docker.io/library/jenkinsimg:0.2 0.0s done
+#10 DONE 0.1s
+
+View build details: docker-desktop://dashboard/build/default/default/82j86jypdp6rrbo28zlmz2i1w
+
+What's Next?
+  View a summary of image vulnerabilities and recommendations ג†’ docker scout quickview
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Run Docker Container)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] bat
+
+c:\temp\workspace\pl-flask>docker rm -f flask_app   || true
+Error response from daemon: No such container: flask_app
+[Pipeline] bat
+
+c:\temp\workspace\pl-flask>cd C:\Users\PC\PycharmProjects\wog 
+[Pipeline] bat
+
+c:\temp\workspace\pl-flask>docker-compose up -d 
+time="2024-07-29T04:58:18+03:00" level=warning msg="c:\\temp\\workspace\\pl-flask\\docker-compose.yml: `version` is obsolete"
+ Network pl-flask_default  Creating
+ Network pl-flask_default  Created
+ Container pl-flask-web-1  Creating
+ Container pl-flask-web-1  Created
+ Container pl-flask-web-1  Starting
+ Container pl-flask-web-1  Started
+[Pipeline] bat
+
+c:\temp\workspace\pl-flask>docker run -d -p 8777:5000 --name flask_app -v C:/Users/PC/PycharmProjects/wog/Scores.txt:/app/Scores.txt jenkinsimg:0.2 
+3e7c2963531a472c31a993cfdddda9d4570b5c61e82cfc1abbdc8dd9e657fcb4
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Install Dependencies)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] bat
+
+c:\temp\workspace\pl-flask>pip install selenium 
+Defaulting to user installation because normal site-packages is not writeable
+Requirement already satisfied: selenium in c:\users\pc\appdata\roaming\python\python312\site-packages (4.23.1)
+Requirement already satisfied: urllib3<3,>=1.26 in c:\users\pc\appdata\roaming\python\python312\site-packages (from urllib3[socks]<3,>=1.26->selenium) (2.2.2)
+Requirement already satisfied: trio~=0.17 in c:\users\pc\appdata\roaming\python\python312\site-packages (from selenium) (0.26.0)
+Requirement already satisfied: trio-websocket~=0.9 in c:\users\pc\appdata\roaming\python\python312\site-packages (from selenium) (0.11.1)
+Requirement already satisfied: certifi>=2021.10.8 in c:\users\pc\appdata\roaming\python\python312\site-packages (from selenium) (2024.7.4)
+Requirement already satisfied: typing_extensions~=4.9 in c:\users\pc\appdata\roaming\python\python312\site-packages (from selenium) (4.12.2)
+Requirement already satisfied: websocket-client~=1.8 in c:\users\pc\appdata\roaming\python\python312\site-packages (from selenium) (1.8.0)
+Requirement already satisfied: attrs>=23.2.0 in c:\users\pc\appdata\roaming\python\python312\site-packages (from trio~=0.17->selenium) (23.2.0)
+Requirement already satisfied: sortedcontainers in c:\users\pc\appdata\roaming\python\python312\site-packages (from trio~=0.17->selenium) (2.4.0)
+Requirement already satisfied: idna in c:\users\pc\appdata\roaming\python\python312\site-packages (from trio~=0.17->selenium) (3.7)
+Requirement already satisfied: outcome in c:\users\pc\appdata\roaming\python\python312\site-packages (from trio~=0.17->selenium) (1.3.0.post0)
+Requirement already satisfied: sniffio>=1.3.0 in c:\users\pc\appdata\roaming\python\python312\site-packages (from trio~=0.17->selenium) (1.3.1)
+Requirement already satisfied: cffi>=1.14 in c:\users\pc\appdata\roaming\python\python312\site-packages (from trio~=0.17->selenium) (1.16.0)
+Requirement already satisfied: wsproto>=0.14 in c:\users\pc\appdata\roaming\python\python312\site-packages (from trio-websocket~=0.9->selenium) (1.2.0)
+Requirement already satisfied: pysocks!=1.5.7,<2.0,>=1.5.6 in c:\users\pc\appdata\roaming\python\python312\site-packages (from urllib3[socks]<3,>=1.26->selenium) (1.7.1)
+Requirement already satisfied: pycparser in c:\users\pc\appdata\roaming\python\python312\site-packages (from cffi>=1.14->trio~=0.17->selenium) (2.22)
+Requirement already satisfied: h11<1,>=0.9.0 in c:\users\pc\appdata\roaming\python\python312\site-packages (from wsproto>=0.14->trio-websocket~=0.9->selenium) (0.14.0)
+
+[notice] A new release of pip is available: 24.0 -> 24.1.2
+[notice] To update, run: python.exe -m pip install --upgrade pip
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Wait for Service to Start)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] bat
+
+c:\temp\workspace\pl-flask>ping -n 5 127.0.0.1  1>nul 
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Debug Docker Container)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] bat
+
+c:\temp\workspace\pl-flask>docker ps -a 
+CONTAINER ID   IMAGE                  COMMAND                  CREATED         STATUS                      PORTS                    NAMES
+3e7c2963531a   jenkinsimg:0.2         "flask run"              8 seconds ago   Up 7 seconds                0.0.0.0:8777->5000/tcp   flask_app
+8336318d2ab7   xferax/flask-app:1.2   "flask run"              9 seconds ago   Up 8 seconds                0.0.0.0:5000->5000/tcp   pl-flask-web-1
+98b89136cb4a   python                 "python3"                3 weeks ago     Exited (0) 3 weeks ago                               nifty_agnesi
+27ff19f28dae   jenkins/jenkins:lts    "/usr/bin/tini -- /uג€¦"   8 weeks ago     Exited (143) 27 hours ago                            jenkins_container
+[Pipeline] bat
+
+c:\temp\workspace\pl-flask>curl http://127.0.0.1:8777 
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   222  100   222    0     0  14960      0 --:--:-- --:--:-- --:--:-- 15857
+
+            <html>
+            <head><title>Scores Game</title></head>
+            <body>
+                <h1>The Score is:</h1>
+                <div id="score">8</div>
+            </body>
+            </html>
+            
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Test Application)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] bat
+
+c:\temp\workspace\pl-flask>python C:/Users/PC/PycharmProjects/wog/e2e.py   || exit 1 
+Tests passed.
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] echo
+Pipeline stage completed.
+[Pipeline] bat
+
+c:\temp\workspace\pl-flask>docker rm -f flask_app   || true
+flask_app
+[Pipeline] bat
+
+c:\temp\workspace\pl-flask>docker-compose down   || true
+time="2024-07-29T04:58:41+03:00" level=warning msg="c:\\temp\\workspace\\pl-flask\\docker-compose.yml: `version` is obsolete"
+ Container pl-flask-web-1  Stopping
+ Container pl-flask-web-1  Stopped
+ Container pl-flask-web-1  Removing
+ Container pl-flask-web-1  Removed
+ Network pl-flask_default  Removing
+ Network pl-flask_default  Removed
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] script
+[Pipeline] {
+[Pipeline] withCredentials
+Masking supported pattern matches of %DOCKER_HUB_PASSWORD%
+[Pipeline] {
+[Pipeline] bat
+
+c:\temp\workspace\pl-flask>docker login -u xferax -p **** 
+WARNING! Using --password via the CLI is insecure. Use --password-stdin.
+Login Succeeded
+[Pipeline] bat
+
+c:\temp\workspace\pl-flask>cd C:\Users\PC\PycharmProjects\wog 
+[Pipeline] bat
+
+c:\temp\workspace\pl-flask>docker-compose push 
+time="2024-07-29T04:58:57+03:00" level=warning msg="c:\\temp\\workspace\\pl-flask\\docker-compose.yml: `version` is obsolete"
+ Pushing xferax/flask-app:1.2: 64ce90d81dbe Preparing 
+ Pushing xferax/flask-app:1.2: b184e0277894 Preparing 
+ Pushing xferax/flask-app:1.2: ed0fd255c092 Preparing 
+ Pushing xferax/flask-app:1.2: 7f0a185e3d38 Preparing 
+ Pushing xferax/flask-app:1.2: 081664a1d574 Preparing 
+ Pushing xferax/flask-app:1.2: 6dabc1b666f2 Preparing 
+ Pushing xferax/flask-app:1.2: 90be576ff39f Preparing 
+ Pushing xferax/flask-app:1.2: ed14f45b73f0 Preparing 
+ Pushing xferax/flask-app:1.2: e0781bc8667f Preparing 
+ Pushing xferax/flask-app:1.2: ed14f45b73f0 Waiting 
+ Pushing xferax/flask-app:1.2: e0781bc8667f Waiting 
+ Pushing xferax/flask-app:1.2: 6dabc1b666f2 Waiting 
+ Pushing xferax/flask-app:1.2: 90be576ff39f Waiting 
+ Pushing xferax/flask-app:1.2: 081664a1d574 Layer already exists 
+ Pushing xferax/flask-app:1.2: 7f0a185e3d38 Layer already exists 
+ Pushing xferax/flask-app:1.2: ed0fd255c092 Layer already exists 
+ Pushing xferax/flask-app:1.2: b184e0277894 Layer already exists 
+ Pushing xferax/flask-app:1.2: 64ce90d81dbe Pushing [>                                                  ]  303.1kB/27.91MB
+ Pushing xferax/flask-app:1.2: 64ce90d81dbe Pushing [==>                                                ]  1.188MB/27.91MB
+ Pushing xferax/flask-app:1.2: 64ce90d81dbe Pushing [===>                                               ]  1.778MB/27.91MB
+ Pushing xferax/flask-app:1.2: 6dabc1b666f2 Layer already exists 
+ Pushing xferax/flask-app:1.2: e0781bc8667f Layer already exists 
+ Pushing xferax/flask-app:1.2: 90be576ff39f Layer already exists 
+ Pushing xferax/flask-app:1.2: ed14f45b73f0 Layer already exists 
+ Pushing xferax/flask-app:1.2: 64ce90d81dbe Pushing [===>                                               ]  2.073MB/27.91MB
+ Pushing xferax/flask-app:1.2: 64ce90d81dbe Pushing [=====>                                             ]  2.957MB/27.91MB
+ Pushing xferax/flask-app:1.2: 64ce90d81dbe Pushing [======>                                            ]  3.842MB/27.91MB
+ Pushing xferax/flask-app:1.2: 64ce90d81dbe Pushing [=======>                                           ]  4.137MB/27.91MB
+ Pushing xferax/flask-app:1.2: 64ce90d81dbe Pushing [=======>                                           ]  4.432MB/27.91MB
+ Pushing xferax/flask-app:1.2: 64ce90d81dbe Pushing [========>                                          ]  5.022MB/27.91MB
+ Pushing xferax/flask-app:1.2: 64ce90d81dbe Pushing [==========>                                        ]  5.906MB/27.91MB
+ Pushing xferax/flask-app:1.2: 64ce90d81dbe Pushing [==============>                                    ]  7.971MB/27.91MB
+ Pushing xferax/flask-app:1.2: 64ce90d81dbe Pushing [===============>                                   ]  8.856MB/27.91MB
+ Pushing xferax/flask-app:1.2: 64ce90d81dbe Pushing [===================>                               ]  10.62MB/27.91MB
+ Pushing xferax/flask-app:1.2: 64ce90d81dbe Pushing [======================>                            ]  12.39MB/27.91MB
+ Pushing xferax/flask-app:1.2: 64ce90d81dbe Pushing [=======================>                           ]  13.28MB/27.91MB
+ Pushing xferax/flask-app:1.2: 64ce90d81dbe Pushing [=========================>                         ]  14.45MB/27.91MB
+ Pushing xferax/flask-app:1.2: 64ce90d81dbe Pushing [============================>                      ]  15.63MB/27.91MB
+ Pushing xferax/flask-app:1.2: 64ce90d81dbe Pushing [==============================>                    ]  16.81MB/27.91MB
+ Pushing xferax/flask-app:1.2: 64ce90d81dbe Pushing [================================>                  ]  18.29MB/27.91MB
+ Pushing xferax/flask-app:1.2: 64ce90d81dbe Pushing [==================================>                ]  19.17MB/27.91MB
+ Pushing xferax/flask-app:1.2: 64ce90d81dbe Pushing [====================================>              ]  20.35MB/27.91MB
+ Pushing xferax/flask-app:1.2: 64ce90d81dbe Pushing [======================================>            ]  21.53MB/27.91MB
+ Pushing xferax/flask-app:1.2: 64ce90d81dbe Pushing [========================================>          ]  22.71MB/27.91MB
+ Pushing xferax/flask-app:1.2: 64ce90d81dbe Pushing [===========================================>       ]  24.19MB/27.91MB
+ Pushing xferax/flask-app:1.2: 64ce90d81dbe Pushing [============================================>      ]  24.78MB/27.91MB
+ Pushing xferax/flask-app:1.2: 64ce90d81dbe Pushing [=============================================>     ]  25.37MB/27.91MB
+ Pushing xferax/flask-app:1.2: 64ce90d81dbe Pushing [================================================>  ]  26.84MB/27.91MB
+ Pushing xferax/flask-app:1.2: 64ce90d81dbe Pushing [==================================================>]  28.11MB
+ Pushing xferax/flask-app:1.2: 64ce90d81dbe Pushed 
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS

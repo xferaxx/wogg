@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "scores-app.fullname" . }}-db
+  labels:
+    {{- include "scores-app.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3306
+      targetPort: 3306
+  selector:
+    app.kubernetes.io/name: {{ include "scores-app.name" . }}-db
+    app.kubernetes.io/instance: {{ .Release.Name }}

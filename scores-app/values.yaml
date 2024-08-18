@@ -1,0 +1,66 @@
+replicaCount: 1
+
+image:
+  repository: xferax/wogg-app
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 5000
+  targetPort: 5000
+
+db:
+  image:
+    repository: xferax/wogg-db
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 3306
+    targetPort: 3306
+  volumeMounts:
+    - name: init-sql
+      mountPath: /docker-entrypoint-initdb.d/
+      subPath: init.sql
+
+ingress:
+  enabled: false
+  annotations: {}
+  hosts:
+    - host: scores-app.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+persistence:
+  enabled: true
+  accessMode: ReadWriteOnce
+  size: 1Gi
+  storageClass: ""  # Set to "" for default or specify a storage class
+  dbPath: "/var/lib/mysql"
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+config:
+  mysqlHost: "scores-app-db"
+  mysqlUser: "root"
+  mysqlDatabase: "games"
+  mysqlPassword: ""  # MySQL password is empty
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+
+volumes:
+  - name: init-sql
+    hostPath:
+      path: "C:/Users/PC/PycharmProjects/wogg/init.sql"
+      type: File

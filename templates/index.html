@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Of Games</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Welcome to the World Of Games</h1>
+    </header>
+
+    <nav>
+        <p><strong>Select a game:</strong></p>
+        <div class="game-grid">
+            <div class="game-item">
+                <a href="{{ url_for('guess_game') }}">
+                    <img src="{{ url_for('static', filename='images/guess.png') }}" alt="Guess Game Icon" class="game-icon">
+                    Guess Game
+                </a>
+            </div>
+            <div class="game-item">
+                <a href="{{ url_for('memory_game') }}">
+                    <img src="{{ url_for('static', filename='images/memory.png') }}" alt="Memory Game Icon" class="game-icon">
+                    Memory Game
+                </a>
+            </div>
+            <div class="game-item">
+                <a href="{{ url_for('currency_roulette') }}">
+                    <img src="{{ url_for('static', filename='images/currency.png') }}" alt="Currency Roulette Game Icon" class="game-icon">
+                    Currency Roulette Game
+                </a>
+            </div>
+            <div class="game-item">
+                <a href="{{ url_for('rock_paper_scissors') }}">
+                    <img src="{{ url_for('static', filename='images/rsp.png') }}" alt="Rock, Paper, Scissors Icon" class="game-icon">
+                    Rock, Paper, Scissors
+                </a>
+            </div>
+            <div class="game-item">
+                <a href="{{ url_for('tic_tac_toe') }}">
+                    <img src="{{ url_for('static', filename='images/tictactoe.png') }}" alt="Tic-Tac-Toe Icon" class="game-icon">
+                    Tic-Tac-Toe Game
+                </a>
+            </div>
+            <div class="game-item">
+                <a href="{{ url_for('snake') }}">
+                    <img src="{{ url_for('static', filename='images/snake.png') }}" alt="Snake Game Icon" class="game-icon">
+                    Snake Game
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <aside class="score-container">
+        <p>{{ username }}, your score is: <strong>{{ score }}</strong></p>
+    </aside>
+
+    <footer>
+        <div class="logout-container">
+            <a href="{{ url_for('logout') }}" class="logout-button">Logout</a>
+        </div>
+    </footer>
+</body>
+</html>

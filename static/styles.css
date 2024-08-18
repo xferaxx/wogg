@@ -1,0 +1,243 @@
+/* General Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #ff4c4c; /* Red background */
+    color: #ffffff;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column; /* Stack title and grid vertically */
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+}
+
+/* Centering the Main Title */
+h1 {
+    color: #ffffff;
+    font-size: 2.5em;
+    margin-bottom: 40px; /* Add space below the title */
+}
+
+/* Game Grid Styling */
+.game-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columns for the grid */
+    gap: 20px; /* Space between grid items */
+    width: 100%;
+    max-width: 800px; /* Limit the grid width */
+    padding: 0 20px;
+}
+
+.game-item {
+    background-color: #d9534f;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+    display: flex; /* Add this to align icon and text */
+    align-items: center; /* Center icon and text vertically */
+    justify-content: center; /* Center icon and text horizontally */
+}
+
+.game-item:hover {
+    background-color: #ff6666; /* Light red on hover */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+.game-item a {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 1.5em;
+    font-weight: bold;
+    display: flex; /* Align icon and text horizontally */
+    align-items: center; /* Center icon and text vertically */
+}
+
+/* Tic-Tac-Toe Styles */
+.tic-tac-toe-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#tic-tac-toe-board {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.cell {
+    width: 100px;
+    height: 100px;
+    background-color: #ffffff;
+    color: #ff4c4c;
+    font-size: 2em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 8px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
+}
+
+.cell:hover {
+    background-color: #ff6666;
+}
+
+#game-status {
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    color: #ffffff;
+}
+
+/* Icon Styling */
+.game-icon {
+    width: 50px; /* Set a fixed width */
+    height: 50px; /* Set a fixed height */
+    margin-right: 10px; /* Space between icon and text */
+    vertical-align: middle; /* Align icon with text */
+    object-fit: contain; /* Ensure the image fits within the dimensions */
+}
+
+/* Form Styles */
+form {
+    background-color: #d9534f; /* Slightly darker red for the form */
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    width: 100%;
+    margin-top: 100px; /* Space from the title */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #ffffff;
+    text-align: left;
+    width: 100%; /* Ensure labels take up full width */
+}
+
+input[type="number"],
+input[type="text"],
+input[type="password"] {
+    width: calc(100% - 20px); /* Ensure inputs are full width with padding */
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ffffff;
+    border-radius: 6px;
+    font-size: 16px;
+    background-color: #ff6666; /* Light red for input fields */
+    color: #ffffff;
+}
+
+input[type="number"]::placeholder,
+input[type="text"]::placeholder,
+input[type="password"]::placeholder {
+    color: #ffcccc; /* Light pink for placeholder text */
+}
+
+button {
+    background-color: #ffffff; /* White button */
+    color: #ff4c4c; /* Red text */
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    width: 100%; /* Make button full width */
+}
+
+button:hover {
+    background-color: #ff6666; /* Light red on hover */
+    color: #ffffff; /* White text on hover */
+}
+
+a {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #ffcccc; /* Light pink on hover */
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .game-grid {
+        grid-template-columns: 1fr; /* Stack items on small screens */
+    }
+
+    h1 {
+        font-size: 2em;
+        margin-bottom: 20px;
+    }
+
+    .game-item {
+        font-size: 1.2em;
+    }
+}
+
+/* Score Container at the Bottom-Right Corner */
+.score-container {
+    position: fixed; /* Fixes the position relative to the viewport */
+    bottom: 10px;    /* Positions it 20px from the bottom */
+    right: 10px;     /* Positions it 20px from the right */
+    background-color: #d9534f;
+    padding: 15px;
+    border-radius: 6px;
+    text-align: center;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.score-container p {
+    font-size: 1em;
+    color: #ffffff;
+}
+
+.score-container strong {
+    font-size: 2em;
+    color: #ffcccc;
+}
+
+/* Position the logout button in the top-right corner */
+.logout-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.logout-button {
+    background-color: #ff4c4c; /* Red background */
+    color: #ffffff;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 10px 2px;
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.logout-button:hover {
+    background-color: #d9534f; /* Slightly darker red */
+}

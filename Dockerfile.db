@@ -1,0 +1,11 @@
+# Use the official MySQL image as a base
+FROM mysql:8.0
+
+# Copy your database initialization scripts into the container
+COPY ./init.sql /docker-entrypoint-initdb.d/
+
+# Set environment variables for the MySQL root password and database name
+ENV MYSQL_ALLOW_EMPTY_PASSWORD=yes
+ENV MYSQL_DATABASE=games
+
+EXPOSE 3306

@@ -1,0 +1,450 @@
+שלב 1
+
+first of all i made a Dockerfile with this content:
+
+# Use the official Python image from the Docker Hub
+FROM python:3.11-slim
+
+# Set the working directory in the container
+WORKDIR /test
+
+# Copy the requirements file into the container at /app
+COPY requirements.txt ./
+
+# Install any needed packages specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of the application code into the container
+COPY . .
+
+# Make port 5000 available to the world outside this container
+EXPOSE 5000
+
+# Define environment variable
+ENV FLASK_APP=main_score.py
+ENV FLASK_RUN_HOST=0.0.0.0
+
+# Run Flask when the container launches
+CMD ["flask", "run"]
+
+########################################################
+
+שלב 2
+
+DOCKER COMMANDS THAT I USED TO CREATE THE CONTAINER FOR TESTING
+
+1) cd C:\Users\PC\PycharmProjects\wog = (go to the project Folder)
+
+
+2) docker build -t flask-app:1.2 . = (i build the image)
+
+
+3) docker images = (to see my images)
+i got this output :
+REPOSITORY        TAG       IMAGE ID       CREATED          SIZE
+flask-app         1.2       a88cd75abadf   56 seconds ago   264MB
+
+
+4) docker run -d -p 5000:5000 flask-app:1.2 = (to run the image that i created)
+i got this output : 76b01bd297ecd5d15700438bcc9563f119d3b80418b2d9127ae01e4b8706d0b9
+
+
+5) docker ps = (to see the running containers)
+i got this output :
+CONTAINER ID   IMAGE           COMMAND       CREATED         STATUS         PORTS                    NAMES
+40ec49235b20   flask-app:1.2   "flask run"   10 seconds ago   Up 9 seconds    0.0.0.0:5000->5000/tcp   crazy_shamir
+
+
+
+and if you run http://localhost:5000/ you will see the WEBSITE running and the score is showed up 
+            or http://127.0.0.1:5000/
+
+
+###########################################
+
+how i created this YML:
+docker-compose.yml
+content:
+
+
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    image: xferax/flask-app:1.2
+    environment:
+      - FLASK_APP=main_score.py
+      - FLASK_RUN_HOST=0.0.0.0
+
+
+
+
+
+navigating to the project folder and run: FOR TESTING
+
+
+1)docker-compose build = (Build the docker image)
+
+2)docker-compose up = (Run the docker contianer)
+
+         this is the out put that the flask server is running:
+
+ * Serving Flask app 'main_score.py'
+web-1  |  * Debug mode: off
+web-1  | WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+web-1  |  * Running on all addresses (0.0.0.0)
+web-1  |  * Running on http://127.0.0.1:5000
+
+
+3)docker-compose push = (Push the docker image to docker hub)
+
+
+
+###########################################
+
+
+Jenkins 
+
+i open Jenkins and Run it at CMD using the Jenkins.war file and i created an agent
+then i created a Pipeline called pl-flask
+
+and i created :
+1) stage 1 = a stage to checkout the project from GitHub
+2) stage 2 = a stage to build a docker image for that project
+3) stage 3 = a stage to run the docker container
+4) stage 4 = a stage to selenium test our Score web URL
+5) stage 5 = a stage to push the docker image to Docker-Hub
+
+
+
+when Jenkins is building we can check the image and the container if all is working live
+
+use command: docker ps
+
+we will see the containers is running and the flask server is running on port 8777 and 5000
+
+
+C:\Users\PC>docker ps
+CONTAINER ID   IMAGE                  COMMAND       CREATED         STATUS         PORTS                    NAMES
+3e7c2963531a   jenkinsimg:0.2         "flask run"   2 seconds ago   Up 1 second    0.0.0.0:8777->5000/tcp   flask_app
+8336318d2ab7   xferax/flask-app:1.2   "flask run"   3 seconds ago   Up 2 seconds   0.0.0.0:5000->5000/tcp   pl-flask-web-1
+
+if we run 127.0.0.1:8777 we can see the score
+or 
+if we run 127.0.0.1:5000 we can see the score 
+
+after that the container is being removed
+
+
+and the imaged pushed to DockerHub
+using the docker-compose push
+
+
+
+
+
+if you want to download the image from docker hub
+
+
+FINALY:
+
+1) use the command: docker pull xferax/flask-app:1.2
+
+2) use the command: docker run -d -p 5000:5000 xferax/flask-app:1.2
+                                  or 8777:5000
+
+
+3) run 127.0.0.1:5000 or 127.0.0.1:8777 depend what you chose up in number 2
+
+
+
+
+
+####################################################################
+
+Bonus
+
+****how the app was changed to web app and SQL and mounted with containers****
+
+
+
+1) i build a new Dockerfile file called Dockefile.db: to build env to the Database
+
+
+
+
+
+# Use the official MySQL image as a base
+FROM mysql:8.0
+
+# Copy your database initialization scripts into the container
+COPY ./init.sql /docker-entrypoint-initdb.d/
+
+# Set environment variables for the MySQL root password and database name
+ENV MYSQL_ALLOW_EMPTY_PASSWORD=yes
+ENV MYSQL_DATABASE=games
+
+EXPOSE 3306
+
+
+
+
+#########################################
+
+2) and i updated the app Dockerfile to this new code:
+
+
+
+
+# Use the official Python slim base image
+FROM python:3.11-slim
+
+# Set the working directory
+WORKDIR /app
+
+# Install system dependencies for mysqlclient
+RUN apt-get update && apt-get install -y \
+    gcc \
+    default-libmysqlclient-dev \
+    pkg-config \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy the requirements file into the container
+COPY requirements.txt .
+
+# Install the Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of the application code into the container
+COPY . .
+
+# Expose port 5000
+EXPOSE 5000
+
+# Command to run the application
+CMD ["python", "app.py"]
+
+
+
+
+
+############################################
+
+
+3) YML file was updated also to be matched with the sql and the new Env
+
+
+
+
+version: '3.8'
+
+services:
+  app:
+    build: .
+    image: xferax/wogg-app:latest  # Tag the app image with your Docker Hub repository
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_USER=root
+      - MYSQL_DB=games
+    volumes:
+      - ./Scores.txt:/app/Scores.txt
+      - .:/app  # Mount the entire project directory to /app in the container
+
+  db:
+    image: xferax/wogg-db:latest  # Use your custom MySQL image
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+      MYSQL_DATABASE: games
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+
+volumes:
+  db_data:
+
+
+
+#########################################
+
+
+
+4) SQL file was created called init.sql
+
+
+CREATE DATABASE IF NOT EXISTS games;
+USE games;
+
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE users_scores (
+    user_id INT NOT NULL,
+    score INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+
+##########################################
+
+
+5) now building the containers one for the app( website ("python", "html") ) and one for the Database(SQL)
+
+
+
+#To build the app(website)
+A) docker build -t xferax/wogg-app:latest .  
+
+
+#To build the database app using the Dockerfile.db file
+B) docker build -f Dockerfile.db -t xferax/wogg-db:latest .
+
+
+#Push the app to Dockerhub
+C) docker push xferax/wogg-app:latest
+
+
+#Push the database to Dockerhub
+D) docker push xferax/wogg-db:latest
+
+
+
+
+
+
+6) now remove the images from the pc and download back from Dockerhub and run them
+
+#Pull the database image from Dockerhub
+E) docker pull xferax/wogg-db:latest
+
+
+#Pull the app image from Dockerhub
+F) docker pull xferax/wogg-app:latest
+
+
+
+
+
+
+7) now we need to create a network to let the flask server communicate with the SQL
+
+#Create a network
+G) docker network create wogg-network
+
+
+# Run the database on the network that we created using port 3307:3306
+H) docker run -d --network wogg-network --name wogg-db -p 3307:3306 xferax/wogg-db:latest
+
+
+#Run the app on the network that we created using the port 5000:5000
+I) docker run -d --network wogg-network --name wogg-app -p 5000:5000 -e MYSQL_HOST=wogg-db xferax/wogg-app:latest
+ 
+
+
+
+open browser and type http://127.0.0.1:5000
+
+
+
+
+
+
+############################################
+
+
+8) to see the database open cmd
+
+
+#To access the SQL
+docker exec -it b861abdc92c3 mysql -u root -p
+
+
+
+
+
+
+*after accessing the SQL you can try this command to see what inside:
+ 
+
+
+mysql> SHOW DATABASES;
++--------------------+
+| Database           |
++--------------------+
+| games              |
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+5 rows in set (0.00 sec)
+
+
+
+
+mysql> USE games;
+Database changed
+
+
+
+
+mysql> DESCRIBE users_scores;
++---------+------+------+-----+---------+-------+
+| Field   | Type | Null | Key | Default | Extra |
++---------+------+------+-----+---------+-------+
+| user_id | int  | NO   | MUL | NULL    |       |
+| score   | int  | NO   |     | NULL    |       |
++---------+------+------+-----+---------+-------+
+2 rows in set (0.00 sec)
+
+
+
+
+
+mysql> SELECT * FROM users_scores;
++---------+-------+
+| user_id | score |
++---------+-------+
+|       1 |     8 |
++---------+-------+
+1 row in set (0.00 sec)
+
+
+
+
+
+mysql> DESCRIBE users;
++----------+--------------+------+-----+---------+----------------+
+| Field    | Type         | Null | Key | Default | Extra          |
++----------+--------------+------+-----+---------+----------------+
+| id       | int          | NO   | PRI | NULL    | auto_increment |
+| username | varchar(255) | NO   | UNI | NULL    |                |
+| password | varchar(255) | NO   |     | NULL    |                |
++----------+--------------+------+-----+---------+----------------+
+3 rows in set (0.00 sec)
+
+
+
+
+mysql> SELECT * FROM users;
++----+----------+----------+
+| id | username | password |
++----+----------+----------+
+|  1 | julian   | 0123456  |
++----+----------+----------+
+1 row in set (0.00 sec)
+
+
+
